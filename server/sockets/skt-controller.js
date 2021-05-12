@@ -10,7 +10,7 @@
 // 2. [default] Por socket.id (muy volatil, ya q puede cambiar de id en cualquier momento)
 // 3. SALA PRIVADA: (crear) utilizando el user.id: que es más estable 
 // 
-// para conectarse a una sala "join"
+// para conectarse a una sala se usa "join"
 // Joins a Room, You can join multiple rooms, and by default, on connection, 
 // you join a room with the same name as your ID
 // --------------------------------------------
@@ -37,11 +37,10 @@ const fnSocket_Controller = (_Client) => {
             })
         }
 
-        // Salas
-
+        // Crea Sala: con el nombre de la Sala
         _Client.join(_Data.sala);
 
-        // Add-Cnx en Arreglo Personas
+        // New-Cnx: Add-Persona en Arreglo
         clUsuariosChat.mt_Persona_AddCnx(_Client.id, _Data.nombre, _Data.sala)
 
         // 1 a n: Informa Personas Conectadas a todos los del Chat
@@ -51,23 +50,32 @@ const fnSocket_Controller = (_Client) => {
         _Client.broadcast.to(_Data.sala).emit('listaPersonas-onChat',
             clUsuariosChat.mt_Persona_GetListenSala(_Data.sala));
 
-        // Retorna Personas Conectadas en la Sala
+        // Avisa a sala: que Persona enta a Chat
+        _Client.broadcast.to(_Data.sala).emit('crear-Mensaje',
+            fn01Utl_CrearMensaje('Administrador', `${_Data.nombre}, Se une al Chat...`));
+
+        // Respuesta: Lista Personas en Sala = [ {}, {}, {} ... ]
         _CallBack(clUsuariosChat.mt_Persona_GetListenSala(_Data.sala));
 
     });
 
 
     // RE-TRANSMITIENDO un mensaje a todos: 1 a n
-    _Client.on('crear-Mensaje', (_Data) => {
-        // Data-Persona que envía el mensaje
+    _Client.on('crear-Mensaje', (_Data, _CallBack) => {
+        // Data de Persona que envía el mensaje
         let wPersona = clUsuariosChat.mt_Persona_GetId(_Client.id);
         // Armo mensaje
-        let wMensaje = fn01Utl_CrearMensaje(wPersona, _Data.mensaje);
-        // Envío el msg a Todos
-        _Client.broadcast.to(wPersona.sala).emit('crear-Mensaje', wMensaje)
+        let wMensaje = fn01Utl_CrearMensaje(wPersona.nombre, _Data.mensaje);
+
+        // Envía el msg a Sala
+        _Client.broadcast.to(wPersona.sala).emit('crear-Mensaje', wMensaje);
+
+        // Respuesta
+        _CallBack(wMensaje);
     })
 
-    // DISCONNECT
+
+    // DISCONEXION
     _Client.on('disconnect', () => {
 
         // Borra Persona del Chat
@@ -84,8 +92,9 @@ const fnSocket_Controller = (_Client) => {
     })
 
     // MSG PRIVADOS: 1 a 1
+    // en el cuerpo debe venir "espara"
     _Client.on('mensaje-Privado', _Payload => {
-        // data persona que envía
+        // data de persona que envía msg
         let wPersona = clUsuariosChat.mt_Persona_GetId(_Client.id);
 
         // 1 a n: envío a todos:

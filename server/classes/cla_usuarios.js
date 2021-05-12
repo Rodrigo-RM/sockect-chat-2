@@ -11,7 +11,7 @@ class CL_UsuariosChat {
 
     }
 
-    // Persona: Add 
+    // Insert: Persona: Add item
     mt_Persona_AddCnx(id, nombre, sala) {
         // 
         let wPersona = { id, nombre, sala };
@@ -21,7 +21,7 @@ class CL_UsuariosChat {
         return this.Arr_Personas;
     };
 
-    // Persona: Get-Id
+    // Select-Persona: Get-Id
     mt_Persona_GetId(id) {
         // 
         //    let wPersonaId = this.Arr_Personas.filter(xPersona => {
@@ -33,12 +33,12 @@ class CL_UsuariosChat {
         return wPersonaId;
     };
 
-    // Todas las Personas Conectadas
+    // Select *: Todas las Personas Conectadas
     mt_Persona_GetListAll() {
         return this.Arr_Personas;
     };
 
-    // Persona por Sala
+    // Select * Sala: Personas por Sala
     mt_Persona_GetListenSala(_Sala) {
         // 
         // let wArr_Personas_enSala = this.Arr_Personas.filter(xPersona => {
@@ -50,7 +50,7 @@ class CL_UsuariosChat {
         return wArr_Personas_enSala;
     };
 
-    // Personas. Borrar de Chat
+    // Delete-Personas. Borrar Persona de Chat
     mt_Persona_BorrardeChat(id) {
         // Rescata data Persona antes de Borrar
         let wPersonaBorrada = this.mt_Persona_GetId(id);

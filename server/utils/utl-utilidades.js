@@ -3,7 +3,7 @@
 // accesadas de distintos puntos del proyecto
 
 
-// CREAR MENSAJE
+// ESRUCTURA DE TODOS LOS MENSAJES
 const fn01Utl_CrearMensaje = (nombre, mensaje) => {
 
     return {

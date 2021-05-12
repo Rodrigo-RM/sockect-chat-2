@@ -28,7 +28,8 @@ _Socket.on('connect', () => {
     console.log('Usuario conectado...');
 
     _Socket.emit('entra-al-Chat', wNombreUsuario, (resp) => {
-        console.log('Usuarios Conectados:', resp);
+        // console.log('Usuarios Conectados:', resp);
+        f01_Rederizar_Usuarios(resp);
     });
 
 });
@@ -40,19 +41,24 @@ _Socket.on('disconnect', () => {
 });
 
 
-// Enviar Mensajes a todos
-_Socket.on('crear-Mensaje', function(mensaje) {
+// Recepción Mensajes:
+// 1. Desde otro usuario  
+// 2. mis mensajes se enviaron desde Navegador (submit form)
+// 1 o 2: van al server 
 
-    console.log('Servidor:', mensaje);
-
+_Socket.on('crear-Mensaje', function(wMensaje) {
+    // console.log('Servidor:', wMensaje);
+    // Renderiza Mensaje: no mio
+    f03_Renderiza_Mensajes(wMensaje, false);
+    // Acomoda Scroll
+    f20_ScrollBottom();
 });
 
 
-// Escuchar Cambio de Usuarios (in-out de Chat)
+// Escuchar Cambios de Usuarios (in-out de Chat)
 _Socket.on('listaPersonas-onChat', (mensaje) => {
-
-    console.log('Lista personas:', mensaje);
-
+    // console.log('Lista personas:', mensaje);
+    f01_Rederizar_Usuarios(mensaje);
 });
 
 
